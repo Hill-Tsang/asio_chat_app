@@ -12,7 +12,7 @@ To enable send message to another client. You need to enter **set receiver [inde
 ## Compile
 Please follow https://github.com/Hill-Tsang/cplusplus_sample/tree/main/asio_ssl to compile openssl and prepare the required certs in cert folder.
 
-ASIO library downloaded from https://think-async.com/Asio/Download.html. ASIO version: 3.5.2
+ASIO library downloaded from https://think-async.com/Asio/Download.html. ASIO version: 1.36.0
 ### Server
 ```
 g++ -I include .\chat_server.cpp -I openssl-3.5.2\build\include\ -L openssl-3.5.2\build\lib\ -o build\chat_server.exe -l ws2_32 -l wsock32 -lssl -lcrypto
