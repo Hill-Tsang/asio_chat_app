@@ -42,6 +42,7 @@ void client::add_to_input_buffer(int c) {
 void client::del_from_input_buffer() {
     if (!input_buffer.empty()) {
         input_buffer.pop_back(); // Removes the last character
+        --cursor_position;
     }
 }
 

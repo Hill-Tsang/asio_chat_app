@@ -11,8 +11,8 @@ int main() {
 
         asio::io_context io_context;
         tcp::resolver resolver(io_context);
-        //auto endpoints = resolver.resolve("10.8.0.6", "5000");
-        auto endpoints = resolver.resolve("192.168.0.11", "5000");
+        auto endpoints = resolver.resolve("10.8.0.10", "5000");
+        //auto endpoints = resolver.resolve("192.168.0.11", "5000");
 
         asio::ssl::context ctx(asio::ssl::context::sslv23);
         ctx.set_password_callback(bind(get_password));
@@ -52,7 +52,7 @@ int main() {
                     input_time++;
                 }
             }
-            printf("\x1b[0G");
+            printf("\n\x1b[0G");
             fflush(stdout);
             c.process_input();
             input_char = 0; // Reset 
