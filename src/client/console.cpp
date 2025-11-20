@@ -1,13 +1,29 @@
-#include "console.hpp"
+#ifdef WIN
+#include <iostream>
+#include <conio.h>
+#else
 #include <ncurses.h>
+#endif
+
+#include "console.hpp"
+
+#ifdef WIN
+#define ENTER 13
+#define BACKSPACE 8
+#else
+#define ENTER 10
+#define BACKSAPCE 127
+#endif
 
 string console::input_buffer = "";
 int console::input_buffer_size = 0;
 
 console::console(client* client) : client_ptr(client) {
+#ifndef WIN
     initscr();
     cbreak();
     noecho();
+#endif
 
     show_banner();
 
@@ -15,28 +31,49 @@ console::console(client* client) : client_ptr(client) {
 }
 
 console::~console() {
+#ifndef WIN
     endwin();
+#endif
 }
 
 void console::show_banner() {
+#ifdef WIN
+    cout << ("==================================") << endl;
+    cout << ("        ASIO Chat App CLI\n");
+    cout << ("----------------------------------") << endl;
+    cout << ("After setting your name, you can") << endl;
+    cout << ("enter -h to list all commands.") << endl;
+    cout << ("==================================") << endl;
+#else
     printw("==================================\n");
     printw("        ASIO Chat App CLI\n");
     printw("----------------------------------\n");
     printw("After setting your name, you can\n");
     printw("enter -h to list all commands.\n");
     printw("==================================\n");
+#endif
 }
 
 void console::start_cli() {
     int input_char;
 
     while (true) {
+#ifdef WIN
+        printf("cli> ");
+        fflush(stdout);
+#else
         printw("cli> ");
+#endif
+
         while (input_char != ENTER) {
+#ifdef WIN
+            input_char = _getch();
+#else
             input_char = getch();
+#endif
             
             // Press backsapce, remove last character
-            if ((input_char == BACKSAPCE) && (input_buffer_size > 0)) {
+            if ((input_char == BACKSPACE) && (input_buffer_size > 0)) {
                 printf("\b \b");
                 fflush(stdout);
                 del_from_input_buffer();

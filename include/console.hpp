@@ -5,9 +5,6 @@
 
 using namespace std;
 
-#define ENTER 10
-#define BACKSAPCE 127
-
 class console {
     public:
         console(client* client_ptr);

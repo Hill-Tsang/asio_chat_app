@@ -1,22 +1,41 @@
 CXX = g++
 
-OPENSSL_DIR = /Volumes/Backup/openssl-3.5.4-static
-NCURSES_DIR = /Volumes/Backup/ncurses-6.5-static
+#OPENSSL_DIR = /Volumes/Backup/openssl-3.5.4-static
+OPENSSL_DIR = J:\Development\program_test\openssl-3.5.2
 
-INCLUDE = -Iinclude -I$(OPENSSL_DIR)/include/ -I$(NCURSES_DIR)/include
-LDFLAG = -L$(OPENSSL_DIR)/lib/ -L$(NCURSES_DIR)/lib
-LIBS = -lssl -lcrypto -lncurses 
+ifeq ($(OS),Windows_NT)
+	fixPATH = $(subst /,\,$1)
 
-CXXFLAGS = $(INCLUDE) -std=c++11
+	INCLUDE = -Iinclude -I$(OPENSSL_DIR)\include
+	CXXFLAGS = $(INCLUDE) -std=c++11 -DWIN
+	LDFLAG = -L$(OPENSSL_DIR)\lib
+	LIBS = -lws2_32 -lwsock32 -lssl -lcrypto
 
-CLIENT_SRCS = src/client/client.cpp src/client/main.cpp src/client/console.cpp
+	CLIENT_TARGET = build\chat_client.exe
+	SERVER_TARGET = build\chat_server.exe
+
+	RM = del
+else
+	fixPATH = $1
+
+	NCURSES_DIR = /Volumes/Backup/ncurses-6.5-static
+
+	INCLUDE = -Iinclude -I$(OPENSSL_DIR)/include/ -I$(NCURSES_DIR)/include
+	CXXFLAGS = $(INCLUDE) -std=c++11
+	LDFLAG = -L$(OPENSSL_DIR)/lib/ -L$(NCURSES_DIR)/lib
+	LIBS = -lssl -lcrypto -lncurses
+
+	CLIENT_TARGET = build/chat_client
+	SERVER_TARGET = build/chat_server
+
+	RM = rm
+endif
+
+CLIENT_SRCS = $(call fixPATH,src/client/client.cpp) $(call fixPATH,src/client/main.cpp) $(call fixPATH,src/client/console.cpp)
 CLIENT_OBJS = $(CLIENT_SRCS:.cpp=.o)
 
-SERVER_SRCS = src/server/server.cpp src/server/session.cpp src/server/main.cpp
+SERVER_SRCS = $(call fixPATH,src/server/server.cpp) $(call fixPATH,src/server/session.cpp) $(call fixPATH,src/server/main.cpp)
 SERVER_OBJS = $(SERVER_SRCS:.cpp=.o)
-
-CLIENT_TARGET = build/chat_client
-SERVER_TARGET = build/chat_server
 
 
 all: $(CLIENT_TARGET) $(SERVER_TARGET)
@@ -33,4 +52,4 @@ $(SERVER_TARGET): $(SERVER_OBJS)
 
 # Clean target: removes generated files
 clean:
-	rm $(CLIENT_TARGET) $(SERVER_TARGET) $(CLIENT_OBJS) $(SERVER_OBJS)
+	$(RM) $(CLIENT_TARGET) $(SERVER_TARGET) $(CLIENT_OBJS) $(SERVER_OBJS)

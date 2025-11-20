@@ -15,7 +15,11 @@ client::client(asio::io_context& io_context,
 
     t = thread([&](){ io_context.run(); });
 
+#ifdef WIN
+    Sleep(1000);
+#else
     sleep(1);
+#endif
     register_user();
 }
 
