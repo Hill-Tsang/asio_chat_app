@@ -1,3 +1,5 @@
+#include "console.hpp"
+
 #ifdef WIN
 #include <iostream>
 #include <conio.h>
@@ -5,14 +7,12 @@
 #include <ncurses.h>
 #endif
 
-#include "console.hpp"
-
 #ifdef WIN
 #define ENTER 13
 #define BACKSPACE 8
 #else
 #define ENTER 10
-#define BACKSAPCE 127
+#define BACKSPACE 127
 #endif
 
 string console::input_buffer = "";
