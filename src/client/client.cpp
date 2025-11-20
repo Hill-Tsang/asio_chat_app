@@ -1,4 +1,6 @@
+#include <iostream>
 #include "chat_client.hpp"
+#include "console.hpp"
 
 client::client(asio::io_context& io_context,
         asio::ssl::context& context,
@@ -23,36 +25,13 @@ client::~client() {
     t.join();
 }
 
-void client::show_banner() {
-    print_to_console("==================================\n");
-    print_to_console("        ASIO Chat App CLI\n");
-    print_to_console("----------------------------------\n");
-    print_to_console("After setting your name, you can\n");
-    print_to_console("enter -h to list all commands.\n");
-    print_to_console("==================================\n");
-}
-
-void client::add_to_input_buffer(int c) {
-    if (isprint(c)) {
-        input_buffer.insert(cursor_position, 1, c);
-        ++cursor_position;
-    }
-}
-
-void client::del_from_input_buffer() {
-    if (!input_buffer.empty()) {
-        input_buffer.pop_back(); // Removes the last character
-        --cursor_position;
-    }
-}
-
 void client::process_input() {
-    if (input_buffer == "exit") {
+    if (console::input_buffer == "exit") {
         exit(EXIT_SUCCESS);
-    } else if (input_buffer == "-l") {
+    } else if (console::input_buffer == "-l") {
         list_user();
-    } else if (input_buffer.length() >= 3 && input_buffer.substr(0, 3) == "-s ") {
-        string receiver = input_buffer.substr(3);
+    } else if (console::input_buffer.length() >= 3 && console::input_buffer.substr(0, 3) == "-s ") {
+        string receiver = console::input_buffer.substr(3);
         set_receiver(receiver);
     } else {
         send_chat_msg();
@@ -85,8 +64,6 @@ void client::register_user() {
     asio::async_write(socket_, asio::buffer(serialized_message, sizeof(Message)),
                         [this](const error_code& error, size_t length) {
                             if (!error) {
-                                input_buffer = "";
-                                cursor_position = 0;
                             }
                         }
     );
@@ -102,8 +79,6 @@ void client::list_user() {
     asio::async_write(socket_, asio::buffer(serialized_message, sizeof(Message)),
                         [this](const error_code& error, size_t length) {
                             if (!error) {
-                                input_buffer = "";
-                                cursor_position = 0;
                             }
                         }
     );
@@ -120,8 +95,6 @@ void client::set_receiver(string receiver_name) {
     asio::async_write(socket_, asio::buffer(serialized_message, sizeof(Message)),
                         [this](const error_code& error, size_t length) {
                             if (!error) {
-                                input_buffer = "";
-                                cursor_position = 0;
                             }
                         }
     );
@@ -130,7 +103,7 @@ void client::set_receiver(string receiver_name) {
 void client::send_chat_msg() {
     Message message_to_send;
     message_to_send.type = CHAT;
-    strcpy(message_to_send.text, input_buffer.c_str());
+    strcpy(message_to_send.text, console::input_buffer.c_str());
     strcpy(message_to_send.receiver, receiver.c_str());
     strcpy(message_to_send.sender, username.c_str());
 
@@ -140,8 +113,6 @@ void client::send_chat_msg() {
     asio::async_write(socket_, asio::buffer(serialized_message, sizeof(Message)),
                         [this](const error_code& error, size_t length) {
                             if (!error) {
-                                input_buffer = "";
-                                cursor_position = 0;
                             }
                         }
     );
@@ -200,18 +171,13 @@ void client::receive_message() {
                                     string sender(received_message.sender, sizeof(received_message.sender));
 
                                     if (received_message.type == SET_RECEIVER) {
-                                        console_output("Sever", message_text);
+                                        console::print_received_msg("Sever", message_text);
                                         receiver = received_message.receiver;
                                     } else {
-                                        console_output(sender, message_text);
+                                        console::print_received_msg(sender, message_text);
                                     }
                                     receive_message();
                                 }
                             }
     );
-}
-
-void client::console_output(string sender, string message) {
-    printf("\x1b[2K\x1b[0G%s: %s\n\x1b[0Gcli> %s\x1b[%dG", sender.c_str(), message.c_str(), input_buffer.c_str(), cursor_position + 6);
-    fflush(stdout);
 }

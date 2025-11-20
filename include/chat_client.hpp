@@ -1,15 +1,12 @@
-#include <cstdlib>
+#ifndef CHAT_CLIENT_HPP
+#define CHAT_CLIENT_HPP
+
 #include <cstring>
-#include <functional>
-#include <iostream>
 #include <fstream>
 #include <thread>
-#include <sstream>
-//#include <ncurses.h>
 #include "asio.hpp"
 #include "asio/ssl.hpp"
 #include "message.hpp"
-#include "console_output.hpp"
 
 using namespace std;
 using asio::ip::tcp;
@@ -25,12 +22,6 @@ class client {
                 const tcp::resolver::results_type& endpoints);
 
         ~client();
-
-        void show_banner();
-
-        void add_to_input_buffer(int c);
-
-        void del_from_input_buffer();
 
         void process_input();
 
@@ -53,11 +44,6 @@ class client {
 
         void receive_message();
 
-        void console_output(string sender, string message);
-
-        string input_buffer;
-        int cursor_position = 0;
-
         ofstream log_file;
 
         // Messages send to and receive from server
@@ -69,3 +55,5 @@ class client {
 
         thread t;
 };
+
+#endif

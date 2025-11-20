@@ -1,12 +1,15 @@
 CXX = g++
 
-INCLUDE = -Iinclude -I/Volumes/Backup/openssl-3.5.4-static/include/ -I/Volumes/Backup/ncurses-6.5-static/include
-LDFLAG = -L/Volumes/Backup/openssl-3.5.4-static/lib/ -L/Volumes/Backup/ncurses-6.5-static/lib
+OPENSSL_DIR = /Volumes/Backup/openssl-3.5.4-static
+NCURSES_DIR = /Volumes/Backup/ncurses-6.5-static
+
+INCLUDE = -Iinclude -I$(OPENSSL_DIR)/include/ -I$(NCURSES_DIR)/include
+LDFLAG = -L$(OPENSSL_DIR)/lib/ -L$(NCURSES_DIR)/lib
 LIBS = -lssl -lcrypto -lncurses 
 
 CXXFLAGS = $(INCLUDE) -std=c++11
 
-CLIENT_SRCS = src/client/client.cpp src/client/main.cpp src/client/console_output.cpp
+CLIENT_SRCS = src/client/client.cpp src/client/main.cpp src/client/console.cpp
 CLIENT_OBJS = $(CLIENT_SRCS:.cpp=.o)
 
 SERVER_SRCS = src/server/server.cpp src/server/session.cpp src/server/main.cpp

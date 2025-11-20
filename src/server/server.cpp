@@ -27,7 +27,7 @@ void server::do_accept() {
             if (!error) {
                 cout << "Create session" << endl;
                 cout << "Add session pointer to list index " << user_num << endl;
-                session_map[user_num] = make_shared<session>(asio::ssl::stream<tcp::socket>(move(socket), context_));
+                session_map[user_num] = make_shared<session>(asio::ssl::stream<tcp::socket>(std::move(socket), context_));
                 session_map[user_num]->index = user_num;
                 session_map[user_num]->start();
                 

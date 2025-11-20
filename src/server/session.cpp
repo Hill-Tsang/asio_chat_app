@@ -1,6 +1,6 @@
 #include "chat_server.hpp"
 
-session::session(asio::ssl::stream<tcp::socket> socket) : socket_(move(socket)) {
+session::session(asio::ssl::stream<tcp::socket> socket) : socket_(std::move(socket)) {
 }
 
 void session::start() {

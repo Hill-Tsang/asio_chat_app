@@ -1,5 +1,5 @@
-#include <cstdlib>
-#include <string>
+#ifndef MESSAGE_HPP
+#define MESSAGE_HPP
 
 using namespace std;
 
@@ -16,3 +16,5 @@ enum message_type {
     LIST_USER,
     CHAT,
 };
+
+#endif
