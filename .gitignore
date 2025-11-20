@@ -5,3 +5,7 @@ build/*
 
 cert/*
 !cert/.gitkeep
+
+*.o
+
+._*
